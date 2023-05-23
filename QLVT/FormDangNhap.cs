@@ -100,6 +100,35 @@ namespace QLVT
 
             if (Program.KetNoi() == 0) return;
 
+            try
+            {
+                String checkDangNhap = "declare @result int " +
+                      "exec @result = [sp_Check_DangNhap_Login]  '" + Program.mlogin + "'  " +
+                      "select @result";
+                Console.WriteLine(checkDangNhap);
+                Program.myReader = Program.ExecSqlDataReader(checkDangNhap);
+                if (Program.myReader == null) { return; }
+                Program.myReader.Read();
+                if (Program.myReader.GetInt32(0) == 1)
+                {
+                    MessageBox.Show("Không có nhân viên nào tương ứng với tài khoản này!", "Thông báo", MessageBoxButtons.OK);
+                    teUserName.Focus();
+                    Program.myReader.Close();
+                    return;
+                }
+                else
+                {
+                    Program.myReader.Close();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi kết nối! " + ex.Message, "Thông báo", MessageBoxButtons.OK);
+                return;
+            }
+
+
             Program.mChinhNhanh = cbChiNhanh.SelectedIndex;
             Program.mloginDN = Program.mlogin;
             Program.passwordDN = Program.password;

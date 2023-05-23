@@ -133,7 +133,7 @@
             // 
             this.btnDangNhap.Caption = "Đăng nhập";
             this.btnDangNhap.Id = 16;
-            this.btnDangNhap.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("barButtonItemDangNhap.ImageOptions.SvgImage")));
+            this.btnDangNhap.ImageOptions.SvgImage = global::QLVT.Properties.Resources.bo_person;
             this.btnDangNhap.Name = "btnDangNhap";
             this.btnDangNhap.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItem3_ItemClick);
             // 
@@ -163,7 +163,7 @@
             this.btnTaoTaiKhoan.Caption = "Tạo tài khoản";
             this.btnTaoTaiKhoan.Enabled = false;
             this.btnTaoTaiKhoan.Id = 20;
-            this.btnTaoTaiKhoan.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("barButtonItemTaoTaiKhoan.ImageOptions.SvgImage")));
+            this.btnTaoTaiKhoan.ImageOptions.SvgImage = global::QLVT.Properties.Resources.bo_customer;
             this.btnTaoTaiKhoan.Name = "btnTaoTaiKhoan";
             this.btnTaoTaiKhoan.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItem7_ItemClick);
             // 

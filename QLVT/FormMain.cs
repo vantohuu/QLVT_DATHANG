@@ -49,6 +49,12 @@ namespace QLVT
             HOTEN.Text = "HOTEN";
             NHOM.Text = "NHOM";
             Program.conn.Close();
+            GC.Collect();
+            GC.WaitForFullGCApproach();
+            GC.WaitForFullGCComplete();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+
         }
 
 
@@ -77,6 +83,13 @@ namespace QLVT
             barButtonItemDangXuat.Enabled = true;
             btnDangNhap.Enabled = false;
             /// tiep tuc phan quuyen ....
+            if (Program.mGroup == "USER" )
+            {
+                btnTaoTaiKhoan.Enabled = false;
+            } else {
+                btnTaoTaiKhoan.Enabled = true;
+
+            }
         }
  
 
@@ -87,14 +100,29 @@ namespace QLVT
 
         private void barButtonItem7_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
-
+            Form form = this.CheckExists(typeof(FormTaoTaiKhoan));
+            if (Program.mlogin != Program.mloginDN)
+            {
+                MessageBox.Show("Bạn không có quyền tạo tài khoản ở site khác, vui lòng chọn lại site của bạn", "", MessageBoxButtons.OK);
+                if (form != null) form.Close();
+            }
+            else
+            {
+                if (form != null) form.Activate();
+                else
+                {
+                    FormTaoTaiKhoan f = new FormTaoTaiKhoan();
+                    f.MdiParent = this;
+                    f.Show();
+                }
+            }
         }
 
         private void barButtonItem4_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
             DangXuat();
             ribbonPageBaoCao.Visible = ribbonPageNhapXuat.Visible = ribbonPageNghiepVu.Visible = false;
-            barButtonItemDangXuat.Enabled = false;
+            barButtonItemDangXuat.Enabled = btnTaoTaiKhoan.Enabled = false;
             btnDangNhap.Enabled = true;
            
 

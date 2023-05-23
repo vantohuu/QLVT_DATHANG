@@ -13,13 +13,13 @@ namespace QLVT
     {
         public static SqlConnection conn = new SqlConnection();
         public static String connstr;
-        public static String connstr_publisher = "Data Source= GIABAO;Initial Catalog= QLVT_DATHANG; Integrated Security = True";     
+        public static String connstr_publisher = "Data Source= HP;Initial Catalog= QLVT; Integrated Security = True";     
         public static SqlDataAdapter da;
         public static SqlDataReader myReader;
-        public static String servername = "GIABAO";
+        public static String servername = "HP";
         public static String username = "";
         public static String password = "";
-        public static String database = "QLVT_DATHANG";
+        public static String database = "QLVT";
         public static String remotelogin = "htkn";
         public static String remotepassword = "123456";
         public static String mloginDN = "";
@@ -37,13 +37,17 @@ namespace QLVT
         {
             try
             {
+                if (Program.conn.State == ConnectionState.Open) Program.conn.Close();
                 Program.connstr = "Data Source=" + Program.servername + ";Initial Catalog=" + Program.database + ";User ID=" +
                       Program.mlogin + ";password=" + Program.password;
+                Console.WriteLine(Program.servername);
+                Console.WriteLine(Program.database);
+                Console.WriteLine(Program.mlogin);
+                Console.WriteLine(Program.password);
                 Program.conn.ConnectionString = Program.connstr;
                 Program.conn.Open();
                 return 1;
             }
-
             catch (Exception e)
             {
                 MessageBox.Show("Lỗi kết nối cơ sở dữ liệu.\nBạn xem lại user name và password.\n " + e.Message, "", MessageBoxButtons.OK);

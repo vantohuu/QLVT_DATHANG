@@ -15,7 +15,6 @@ namespace QLVT
 {
     public partial class FormPhieuXuat : Form
     {
-        string macn = "";
         int vitri = 0;
 
         bool check_them = true;
@@ -37,25 +36,26 @@ namespace QLVT
             InitializeComponent();
         }
 
-        private void phieuXuatBindingNavigatorSaveItem_Click(object sender, EventArgs e)
-        {
-            this.Validate();
-            this.phieuXuatBindingSource.EndEdit();
-            this.tableAdapterManager.UpdateAll(this.DSPHIEUXUAT);
+        //private void phieuXuatBindingNavigatorSaveItem_Click(object sender, EventArgs e)
+        //{
+        //    this.Validate();
+        //    this.phieuXuatBindingSource.EndEdit();
+        //    this.tableAdapterManager.UpdateAll(this.DSPHIEUXUAT);
+        //}
 
-        }
-
-        private Form CheckExists(Type ftype)
-        {
-            foreach (Form f in this.MdiChildren)
-                if (f.GetType() == ftype)
-                    return f;
-            return null;
-        }
+        //private Form CheckExists(Type ftype)
+        //{
+        //    foreach (Form f in this.MdiChildren)
+        //        if (f.GetType() == ftype)
+        //            return f;
+        //    return null;
+        //}
         private void FormPhieuXuat_Load(object sender, EventArgs e)
         {
+            // TODO: This line of code loads data into the 'DSPHIEUXUAT.ThongTinVatTu' table. You can move, or remove it, as needed.
+            // TODO: This line of code loads data into the 'DSPHIEUXUAT.ThongTinKho' table. You can move, or remove it, as needed.
             // TODO: This line of code loads data into the 'DSPHIEUXUAT.NhanVien' table. You can move, or remove it, as needed.
-            
+
             // TODO: This line of code loads data into the 'DSPHIEUXUAT.vw_DSNV' table. You can move, or remove it, as needed.
 
             DSPHIEUXUAT.EnforceConstraints = false;
@@ -65,7 +65,10 @@ namespace QLVT
             this.CTPXTableAdapter.Fill(this.DSPHIEUXUAT.CTPX);
             this.nhanVienTableAdapter.Connection.ConnectionString = Program.connstr;
             this.nhanVienTableAdapter.Fill(this.DSPHIEUXUAT.NhanVien);
-            macn = ((DataRowView)nhanVienBindingSource[0])["MaCN"].ToString();
+            this.thongTinKhoTableAdapter.Connection.ConnectionString = Program.connstr;
+            this.thongTinKhoTableAdapter.Fill(this.DSPHIEUXUAT.ThongTinKho);
+            this.thongTinVatTuTableAdapter.Connection.ConnectionString = Program.connstr;
+            this.thongTinVatTuTableAdapter.Fill(this.DSPHIEUXUAT.ThongTinVatTu);
 
             // Van con loi, tu xu li, thay k sua, thay se check khi thi
             cbChiNhanh.DataSource = Program.bds_dspm;
@@ -74,20 +77,18 @@ namespace QLVT
             cbChiNhanh.SelectedIndex = Program.mChinhNhanh;
 
             cbChiNhanh.SelectedIndex = Program.mChinhNhanh;
-            if (Program.mGroup == "CONG TY")
+            if (Program.mGroup == "CONGTY")
             {
                 cbChiNhanh.Enabled = true;
-                btnThemPX.Enabled = btnXoaPX.Enabled = btnSuaPX.Enabled = false;
-
+                btnThemPX.Enabled = btnXoaPX.Enabled = btnSuaPX.Enabled = btnGhiPX.Enabled = btnHuyPX.Enabled = btnPhucHoiPX.Enabled = false;
+                btnReloadPX.Enabled = btnThoatPX.Enabled = true;
             }
             else
             {
-                btnThemPX.Enabled = btnXoaPX.Enabled = btnSuaPX.Enabled = true;
+                btnThemPX.Enabled = btnXoaPX.Enabled = btnSuaPX.Enabled = btnReloadPX.Enabled = btnThoatPX.Enabled = btnPhucHoiPX.Enabled = true;
+                btnGhiPX.Enabled = btnHuyPX.Enabled = false;
                 cbChiNhanh.Enabled = false;
             }
-            btnReloadPX.Enabled = true;
-            btnGhiPX.Enabled = false;
-            btnHuyPX.Enabled = false;
 
             // bat tat phan quyen - chua phan quyen cho nhom khác
 
@@ -106,15 +107,23 @@ namespace QLVT
             //        f.Show();
             //    }
             //}
-
-            NGAY.Visible = HOTEN.Visible = MANV.Visible = MAKHO.Visible = phieuXuatGridControl.Enabled = !MAKHO.Visible;
-            lbNGAY.Visible = lbHOTEN.Visible = lbMANV.Visible = lbMAKHO.Visible  = !lbMAKHO.Visible;
-            MAVT.Visible = SOLUONG.Visible = DONGIA.Visible = cTPXGridControl.Enabled = !DONGIA.Visible;
-            lbMAVT.Visible = lbSOLUONG.Visible = lbDONGIA.Visible = !lbDONGIA.Visible;
-            barButtonPX.Caption = MANV.Visible == true ? "Chi tiết phiếu xuất" : "Phiếu xuất";
+    
+            if (Program.mGroup != "CONGTY")
+            {
+                btnThemPX.Enabled = btnXoaPX.Enabled = btnSuaPX.Enabled = btnReloadPX.Enabled = btnThoatPX.Enabled = true;
+                btnGhiPX.Enabled = btnHuyPX.Enabled = false;
+                NGAY.Visible = HOTEN.Visible = MANV.Visible = MAKHO.Visible =  !MAKHO.Visible;
+                lbNGAY.Visible = lbHOTEN.Visible = lbMANV.Visible = lbMAKHO.Visible = ttkComboBox.Visible = !lbMAKHO.Visible;
+                MAVT.Visible = SOLUONG.Visible = DONGIA.Visible = ttvtComboBox.Visible = !DONGIA.Visible;
+                lbMAVT.Visible = lbSOLUONG.Visible = lbDONGIA.Visible = !lbDONGIA.Visible;
+            }
+            cTPXGridControl.Enabled = !cTPXGridControl.Enabled;
+            phieuXuatGridControl.Enabled = !phieuXuatGridControl.Enabled; 
             barButtonPX.ItemAppearance.Normal.BackColor = MANV.Visible == true ? Color.Pink : Color.Tan;
             panelControl2.Enabled = false;
-
+            barButtonPX.Caption = MANV.Visible == true ? "Chi tiết phiếu xuất" : "Phiếu xuất";
+            this.CTPXTableAdapter.Fill(this.DSPHIEUXUAT.CTPX);
+            this.phieuXuatTableAdapter.Fill(this.DSPHIEUXUAT.PhieuXuat);
         }
 
         private void panelControl2_Paint(object sender, PaintEventArgs e)
@@ -152,9 +161,10 @@ namespace QLVT
                 check_them = true;
                 panelControl2.Enabled = true;
                 vitri = phieuXuatBindingSource.Position;
+                barButtonPX.Enabled = false;
                 panelControl2.Enabled = true;
                 phieuXuatBindingSource.AddNew();
-                string getMaxIdQuery = "EXEC [dbo].[sp_Get_Max_Id_Char] 'PHIEUXUAT', 'MAPX'";
+                string getMaxIdQuery = "EXEC [dbo].[sp_Get_Max_Id] 'PHIEUXUAT', 'MAPX'";
                 string maphieuxxuat = "";
                 MANV.Text = Program.username.ToString();
                 Console.WriteLine(getMaxIdQuery);
@@ -191,6 +201,7 @@ namespace QLVT
                 vitri = CTPXBindingSource.Position;
                 panelControl2.Enabled = true;
                 cTPXGridControl.Enabled = false;
+                barButtonPX.Enabled = false;
                 CTPXBindingSource.AddNew();
             } 
                 
@@ -214,31 +225,29 @@ namespace QLVT
             if (barButtonPX.Caption == "Chi tiết phiếu xuất")
             {
                 phieuXuatBindingSource.CancelEdit();
-                if (btnThemPX.Enabled == false)
-                {
-                    phieuXuatBindingSource.Position = vitri;
-                }
+                this.phieuXuatTableAdapter.Fill(this.DSPHIEUXUAT.PhieuXuat);
 
+                phieuXuatBindingSource.Position = vitri;
                 btnThemPX.Enabled = btnXoaPX.Enabled = btnSuaPX.Enabled = btnReloadPX.Enabled = btnThoatPX.Enabled = true;
                 btnGhiPX.Enabled = btnHuyPX.Enabled = false;
                 phieuXuatGridControl.Enabled = true;
-                this.phieuXuatTableAdapter.Fill(this.DSPHIEUXUAT.PhieuXuat);
+                panelControl2.Enabled = false;
+                barButtonPX.Enabled = true;
+
             }
             else
             {
                 CTPXBindingSource.CancelEdit();
-                if (btnThemPX.Enabled == false)
-                {
-                    CTPXBindingSource.Position = vitri;
-                }
-
+                this.CTPXTableAdapter.Fill(this.DSPHIEUXUAT.CTPX);
+                CTPXBindingSource.Position = vitri;
                 btnThemPX.Enabled = btnXoaPX.Enabled = btnSuaPX.Enabled = btnReloadPX.Enabled = btnThoatPX.Enabled = true;
                 btnGhiPX.Enabled = btnHuyPX.Enabled = false;
                 cTPXGridControl.Enabled = true;
                 panelControl2.Enabled = false;
-                this.CTPXTableAdapter.Fill(this.DSPHIEUXUAT.CTPX);
-            }    
-            
+                barButtonPX.Enabled = true;
+
+            }
+
         }
 
         private void barButtonItem7_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
@@ -269,6 +278,7 @@ namespace QLVT
                 btnThemPX.Enabled = btnXoaPX.Enabled = btnSuaPX.Enabled = btnReloadPX.Enabled = btnThoatPX.Enabled = btnPhucHoiPX.Enabled = false;
                 btnGhiPX.Enabled = btnHuyPX.Enabled = true;
                 phieuXuatGridControl.Enabled = false;
+                barButtonPX.Enabled = false;
                 check_them = false;
             }
             else
@@ -283,6 +293,7 @@ namespace QLVT
                 btnThemPX.Enabled = btnXoaPX.Enabled = btnSuaPX.Enabled = btnReloadPX.Enabled = btnThoatPX.Enabled = btnPhucHoiPX.Enabled = false;
                 btnGhiPX.Enabled = btnHuyPX.Enabled = true;
                 cTPXGridControl.Enabled = false;
+                barButtonPX.Enabled = false;
                 check_them = false;
             }
         }
@@ -374,13 +385,13 @@ namespace QLVT
         {
             if (NGAY.Text.Trim() == "")
             {
-                MessageBox.Show("Ngày tạp phiếu xuất không được để trống!", "", MessageBoxButtons.OK);
+                MessageBox.Show("Ngày tạp phiếu xuất không được để trống!", "Thông báo", MessageBoxButtons.OK);
                 NGAY.Focus();
                 return;
             }
             if (HOTEN.Text.Trim() == "")
             {
-                MessageBox.Show("Họ tên khách hàng không được để trống!", "", MessageBoxButtons.OK);
+                MessageBox.Show("Họ tên khách hàng không được để trống!", "Thông báo", MessageBoxButtons.OK);
                 HOTEN.Focus();
                 return;
             }
@@ -400,7 +411,7 @@ namespace QLVT
 
             if (MAKHO.Text.Trim() == "")
             {
-                MessageBox.Show("Mã kho không được để trống!", "", MessageBoxButtons.OK);
+                MessageBox.Show("Mã kho không được để trống!", "Thông báo", MessageBoxButtons.OK);
                 MAKHO.Focus();
                 return;
             }
@@ -410,6 +421,56 @@ namespace QLVT
             {
                 MessageBox.Show("Mã kho không thể lớn hơn 4 kí tự", "Thông báo", MessageBoxButtons.OK);
                 MAKHO.Focus();
+                return;
+            }
+
+        }
+
+        private void validateCTPhieuXuat()
+        {
+            if (MAVT.Text.Trim() == "")
+            {
+                MessageBox.Show("Ngày tạp phiếu xuất không được để trống!", "Thông báo", MessageBoxButtons.OK);
+                MAVT.Focus();
+                return;
+            }
+            if (SOLUONG.Text.Trim() == "")
+            {
+                MessageBox.Show("Số lượng không được để trống!", "Thông báo", MessageBoxButtons.OK);
+                SOLUONG.Focus();
+                return;
+            }
+            if (DONGIA.Text.Trim() == "")
+            {
+                MessageBox.Show("Đơn giá không được để trống!", "Thông báo", MessageBoxButtons.OK);
+                HOTEN.Focus();
+                return;
+            }
+
+            if (Regex.IsMatch(SOLUONG.Text, @"^[0-9]+$") == false)
+            {
+                MessageBox.Show("Số lượng chỉ bao gồm chữ số!", "Thông báo", MessageBoxButtons.OK);
+                SOLUONG.Focus();
+                return;
+            }
+
+            if (Regex.IsMatch(DONGIA.Text, @"^[0-9]+$") == false)
+            {
+                MessageBox.Show("Đơn giá chỉ bao gồm chữ số!", "Thông báo", MessageBoxButtons.OK);
+                DONGIA.Focus();
+                return;
+            }
+
+            if (int.Parse(SOLUONG.EditValue.ToString()) > 0)
+            {
+                MessageBox.Show("Số lượng phải >0!", "Thông báo", MessageBoxButtons.OK);
+                SOLUONG.Focus();
+                return;
+            }
+            if (int.Parse(DONGIA.EditValue.ToString()) > 0)
+            {
+                MessageBox.Show("Đơn giá phải >0!", "Thông báo", MessageBoxButtons.OK);
+                DONGIA.Focus();
                 return;
             }
 
@@ -492,11 +553,13 @@ namespace QLVT
                 btnGhiPX.Enabled = btnHuyPX.Enabled = false;
                 panelControl2.Enabled = false;
                 phieuXuatGridControl.Enabled = true;
+                barButtonPX.Enabled = true;
             }
             else
             {
                 if (check_them == true)
                 {
+                    validateCTPhieuXuat();
                     String checkvt =
                       "EXEC [dbo].[sp_Check_Exists_Id_Char] 'VATTU', 'MAVT' ,'" + MAVT.Text.Trim() + "'";
                     // string getMaxIdQuery = "EXEC [dbo].[sp_Get_Max_Id_Char] 'PHIEUXUAT', 'MAPX'";
@@ -565,9 +628,11 @@ namespace QLVT
                 btnGhiPX.Enabled = btnHuyPX.Enabled = false;
                 panelControl2.Enabled = false;
                 cTPXGridControl.Enabled = true;
-            }    
+                barButtonPX.Enabled = true;
 
-            
+            }
+
+
         }
 
         private void barButtonItem6_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
@@ -609,6 +674,68 @@ namespace QLVT
                 btnGhiPX.Enabled = btnHuyPX.Enabled = false;
                 cTPXGridControl.Enabled = true;
             }    
+        }
+
+        private void cbChiNhanh_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            Console.WriteLine(cbChiNhanh.SelectedValue.ToString());
+
+            if (cbChiNhanh.SelectedValue.ToString() == "System.Data.DataRowView")
+                return;
+            Program.servername = cbChiNhanh.SelectedValue.ToString();
+
+            if (cbChiNhanh.SelectedIndex != Program.mChinhNhanh)
+            {
+                Program.mlogin = Program.remotelogin;
+                Program.password = Program.remotepassword;
+
+            }
+            else
+            {
+                Program.mlogin = Program.mloginDN;
+                Program.password = Program.passwordDN;
+
+            }
+
+            if (Program.KetNoi() == 0)
+            {
+                MessageBox.Show("Lỗi kết nối về chi nhánh mới", "", MessageBoxButtons.OK);
+
+            }
+
+            else
+            {
+                this.phieuXuatGridControl.Enabled = false;
+                this.phieuXuatTableAdapter.Connection.ConnectionString = Program.connstr;
+                this.phieuXuatTableAdapter.Fill(this.DSPHIEUXUAT.PhieuXuat);
+                this.CTPXTableAdapter.Connection.ConnectionString = Program.connstr;
+                this.CTPXTableAdapter.Fill(this.DSPHIEUXUAT.CTPX);
+                this.nhanVienTableAdapter.Connection.ConnectionString = Program.connstr;
+                this.nhanVienTableAdapter.Fill(this.DSPHIEUXUAT.NhanVien);
+                this.phieuXuatGridControl.Enabled = true;
+
+            }
+        }
+
+        private void tTKHOComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (ttkComboBox.SelectedValue != null) MAKHO.Text = ttkComboBox.SelectedValue.ToString();
+
+            }
+            catch { }
+        }
+
+        private void tTCVTComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (ttvtComboBox.SelectedValue != null) MAVT.Text = ttvtComboBox.SelectedValue.ToString();
+
+            }
+            catch { }
         }
     }
 }
