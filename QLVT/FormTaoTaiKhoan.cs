@@ -355,8 +355,6 @@ namespace QLVT
 
             }
 
-
-
         }
 
         private void btnSua_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)

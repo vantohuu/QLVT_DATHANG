@@ -196,12 +196,52 @@ namespace QLVT
             luong = float.Parse(dt["LUONG"].ToString());
             macn = dt["MACN"].ToString();
             trangthaixoa = 0;
-            if (dt["TrangThaiXoa"].ToString() == "true") trangthaixoa = 1;
+            if (dt["TrangThaiXoa"].ToString() == "True") trangthaixoa = 1;
+            Console.WriteLine(dt["TrangThaiXoa"].ToString());
+            if (trangthaixoa == 1)
+            {
+                nhanVienGridControl.Enabled = false;
+
+                String checkCMND = "EXEC [dbo].[sp_Check_Exists_OtherSite_Id_Char] 'NHANVIEN', 'SOCMND' ,'"
+                    + cmnd + "'";
+                Console.WriteLine(checkCMND);
+                try
+                {
+                    Program.myReader = Program.ExecSqlDataReader(checkCMND);
+                    if (Program.myReader == null) { nhanVienGridControl.Enabled = true;  return; }
+                    Program.myReader.Read();
+                    if (Program.myReader.GetInt32(0) == 1)
+                    {
+                        MessageBox.Show("Không thể sửa thông tin nhân viên đã chuyển chi nhánh!", "Thông báo", MessageBoxButtons.OK);
+                        tbMaNV.Focus();
+                        Program.myReader.Close();
+                        nhanVienGridControl.Enabled = true;
+                        panelControl2.Enabled = false;
+                        return;
+                    }
+                    else
+                    {
+                        Program.myReader.Close();
+                        nhanVienGridControl.Enabled  = true;
+
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi kết nối! " + ex.Message, "Thông báo", MessageBoxButtons.OK);
+                    nhanVienGridControl.Enabled = true;
+                    return;
+                }
+                
+
+            }
             panelControl2.Enabled = true;
             btnThem.Enabled = btnXoa.Enabled = btnSua.Enabled = btnReload.Enabled = btnThoat.Enabled = btnPhucHoi.Enabled = false;
             btnGhi.Enabled = btnHuy.Enabled = true;
             nhanVienGridControl.Enabled = false;
-            check_them = false;       
+            check_them = false;
+            
         }
 
         private void btnReload_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
@@ -297,6 +337,7 @@ namespace QLVT
         }
         private void btnGhi_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
+            
             if (tbMaNV.Text.Trim() == "")
             {
                 MessageBox.Show("Mã nhân viên không được để trống!", "", MessageBoxButtons.OK);
@@ -438,6 +479,8 @@ namespace QLVT
                     return;
                 }
             }
+
+            
 
             if (check_them == true)
             {
